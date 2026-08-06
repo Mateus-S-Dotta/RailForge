@@ -1,4 +1,4 @@
-# Como rodar o script
+# Como rodar o script 'setup.ps1'
 
 ## PowerShell
 ```powershell
@@ -13,12 +13,4 @@ powershell -ExecutionPolicy Bypass -File setup.ps1
 ## Git Bash
 ```bash
 powershell -ExecutionPolicy Bypass -File setup.ps1
-```
-
-## E reincie o VSCODE
-
-# Para ativar o Docker do Python
-
-```bash
-./run-docker.sh
 ```
