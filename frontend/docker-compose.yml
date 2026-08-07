@@ -1,0 +1,41 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: railforge_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    networks:
+      - railForge_network
+
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: railforge_frontend_dev
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - WATCHPACK_POLLING=true
+    networks:
+      - railForge_network
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - node_modules/
+            - .next/
+        - action: rebuild
+          path: package.json
+
+networks:
+  railForge_network:
+    external: true

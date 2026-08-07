@@ -18,3 +18,5 @@ services:
     ports:
       - "8000:8000"
 \`\`\`
+
+docker run --rm -it -v "${PWD}:/app" -w /app node:24.14.0-slim npx create-next-app@latest .
