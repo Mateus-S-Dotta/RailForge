@@ -20,3 +20,5 @@ services:
 \`\`\`
 
 docker run --rm -it -v "${PWD}:/app" -w /app node:24.14.0-slim npx create-next-app@latest .
+
+Adicionando algo ao final para testar
