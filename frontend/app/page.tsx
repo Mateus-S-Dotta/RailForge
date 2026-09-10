@@ -22,7 +22,7 @@ export default function Home() {
   }
 
 
-  function handleChange(nome: string, value: string) {
+  function handleChange(nome: string, value: string | number) {
     const set = findAtual()[1];
 
     set((previous) => ({

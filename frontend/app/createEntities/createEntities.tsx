@@ -20,6 +20,10 @@ export default function ElementForm({ form, close, handleChange }: params) {
 			},
 			body: JSON.stringify(form.result),
 		});
+
+		form.campos.forEach((campo) => {
+			handleChange(campo.nome, "");
+		});
 	}
 
 	return (
