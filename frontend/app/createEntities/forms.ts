@@ -54,7 +54,7 @@ export const formEstacao: FormConfig = {
 };
 
 export const formLine: FormConfig = {
-	call: "stations",
+	call: "lines",
 	title: "Criar uma linha",
 	action: "Criar Linha",
 
@@ -71,6 +71,36 @@ export const formLine: FormConfig = {
 			nome: "color",
 			label: "Cor",
 			placeholder: "Digite uma cor (hex)",
+		},
+	],
+
+	result: {},
+};
+
+export const formConections: FormConfig = {
+	call: "conections",
+	title: "Criar uma conexão",
+	action: "Criar Conexão",
+
+	campos: [
+		{
+			type: "number",
+			nome: "id_line",
+			label: "Linha Id",
+			placeholder: "Digite o Id da Linha",
+			required: true,
+		},
+		{
+			type: "text",
+			nome: "id_station",
+			label: "Estação Id",
+			placeholder: "Digite o Id da Estação",
+		},
+		{
+			type: "text",
+			nome: "sequence",
+			label: "Número na sequencia",
+			placeholder: "Digite a posição na linha",
 		},
 	],
 

@@ -202,6 +202,16 @@ def get_line(
     return line
 
 
+@router.get(
+    "/map",
+    response_model=schemas.MapResponse,
+)
+def get_map(
+    db: Session = Depends(get_db),
+):
+    return crud.get_map(db)
+
+
 @router.patch(
     "/lines/{line_id}",
     response_model=schemas.LineOut,

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, ConfigDict
 
 
@@ -32,7 +32,7 @@ class StationOut(StationBase):
 # ---------- Line ----------
 class LineBase(BaseModel):
     name: str
-    color: str
+    color: Optional[str] = None  # corrigido: color é nullable no model
 
 
 class LineCreate(LineBase):
@@ -54,6 +54,7 @@ class LineOut(LineBase):
 class ConectionBase(BaseModel):
     id_station: int
     id_line: int
+    sequence: int
 
 
 class ConectionCreate(ConectionBase):
@@ -62,3 +63,28 @@ class ConectionCreate(ConectionBase):
 
 class ConectionOut(ConectionBase):
     model_config = ConfigDict(from_attributes=True)
+
+
+# ---------- Map (compostos, só leitura) ----------
+class LineStationOut(BaseModel):
+    """Estação dentro do contexto de uma linha, já na ordem certa (sequence)."""
+    station_id: int
+    name: str
+    position_x: int
+    position_y: int
+    sequence: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class LineMapOut(LineBase):
+    """Linha com suas estações ordenadas, usada só no /map."""
+    id: int
+    stations: List[LineStationOut]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class MapResponse(BaseModel):
+    stations: List[StationOut]
+    lines: List[LineMapOut]

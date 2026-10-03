@@ -191,3 +191,43 @@ def delete_conection(
     db.delete(obj)
     db.commit()
     return True
+
+
+def get_map(db: Session) -> schemas.MapResponse:
+    # Lista mestra de estações, sem duplicar
+    stations = db.execute(select(models.Station)).scalars().all()
+    stations_out = [schemas.StationOut.model_validate(s) for s in stations]
+
+    lines = db.execute(select(models.Line)).scalars().all()
+
+    # Conexões já com o join na estação, ordenadas por linha e sequência
+    conections = db.execute(
+        select(models.Conection, models.Station)
+        .join(models.Station, models.Conection.id_station == models.Station.id)
+        .order_by(models.Conection.id_line, models.Conection.sequence)
+    ).all()
+
+    # Agrupa as estações de cada linha, já na ordem certa
+    stations_by_line: dict[int, list[schemas.LineStationOut]] = {}
+    for conection, station in conections:
+        stations_by_line.setdefault(conection.id_line, []).append(
+            schemas.LineStationOut(
+                station_id=station.id,
+                name=station.name,
+                position_x=station.position_x,
+                position_y=station.position_y,
+                sequence=conection.sequence,
+            )
+        )
+
+    lines_out = [
+        schemas.LineMapOut(
+            id=line.id,
+            name=line.name,
+            color=line.color,
+            stations=stations_by_line.get(line.id, []),
+        )
+        for line in lines
+    ]
+
+    return schemas.MapResponse(stations=stations_out, lines=lines_out)

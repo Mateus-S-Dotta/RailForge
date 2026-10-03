@@ -1,20 +1,48 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ElementForm from "./createEntities/createEntities";
-import { formEstacao as fe, formLine as fl, FormConfig } from "./createEntities/forms";
+import { formEstacao as fe, formLine as fl, formConections as fc, FormConfig } from "./createEntities/forms";
+import { type MapLine, url } from "./constrants";
+import RailMap from "@/components/railMap";
 
 
 export default function Home() {
+  const [lines, setLines] = useState<MapLine[]>([]);
+  const [mapMessage, setMapMessage] = useState("Carregando mapa...");
   const [formEstacao, setFormEstacao] = useState<FormConfig>(fe);
   const [formLinha, setFormLinha] = useState<FormConfig>(fl);
+  const [formConeccao, setFormConeccao] = useState<FormConfig>(fc);
   const [forms, setForms] = useState<number>(-1);
 
   const states = [
     [formEstacao, setFormEstacao],
     [formLinha, setFormLinha],
+    [formConeccao, setFormConeccao]
   ] as const;
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadMap() {
+      try {
+        const result = await fetch(`${url}map`, { signal: controller.signal });
+        if (!result.ok) throw new Error(`HTTP ${result.status}`);
+        const data: { lines: MapLine[] } = await result.json();
+        if (controller.signal.aborted) return;
+        setLines(data.lines);
+        setMapMessage("");
+      } catch {
+        if (!controller.signal.aborted) {
+          setMapMessage("Não foi possível carregar o mapa.");
+        }
+      }
+    }
+
+    loadMap();
+    return () => controller.abort();
+  }, []);
 
 
   function findAtual() {
@@ -43,8 +71,7 @@ export default function Home() {
           </h1>
         </header>
 
-        <svg className="min-h-0 flex-1">
-        </svg>
+        <RailMap lines={lines} message={mapMessage} />
       </div>
       <div className="h-full flex flex-col justify-center border-l border-white p-4">
         {forms === -1 && (
@@ -54,6 +81,9 @@ export default function Home() {
             </Button>
             <Button className="w-full" onClick={() => setForms(1)}>
               Criar Linha
+            </Button>
+            <Button className="w-full" onClick={() => setForms(2)}>
+              Criar Conexão
             </Button>
           </>
         )}

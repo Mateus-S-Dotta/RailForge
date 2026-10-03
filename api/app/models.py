@@ -30,3 +30,12 @@ class Conection(Base):
 
     id_station = Column(Integer, ForeignKey("station.id"), primary_key=True)
     id_line = Column(Integer, ForeignKey("line.id"), primary_key=True)
+    sequence = Column(Integer, nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint(
+            "id_line",
+            "sequence",
+            name="uq_conection_line_sequence"
+        ),
+    )
